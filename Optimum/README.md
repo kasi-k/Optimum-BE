@@ -41,7 +41,7 @@ export default S3Service;
 				"AWS": "arn:aws:iam::096863133185:root"
 			},
 			"Action": "s3:GetObject",
-			"Resource": "arn:aws:s3:::romaafiles/*"
+			"Resource": "arn:aws:s3:::optimumfiles/*"
 		}
 	]
 }
