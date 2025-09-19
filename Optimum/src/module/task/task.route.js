@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { createTask, getAllTasks, updateTaskStatus } from "./task.controller.js";
+import { createTask, getAllTasks, updateTask, updateTaskStatus } from "./task.controller.js";
 import { upload } from "../../config/multer.js";
 
 const taskRoute = Router();
 
-taskRoute.post("/add", upload.array("attachments"), createTask);
+taskRoute.post("/add", upload.array("attachments",5), createTask);
 taskRoute.patch("/updatetask/:id/status", updateTaskStatus);
 
 
 taskRoute.get("/getalltasks", getAllTasks);
 
-// appointmentRoute.put("/updateappointment/:token_id", updateAppointment);
+taskRoute.put("/updatetasks/:_id", updateTask);
 
 export default taskRoute;

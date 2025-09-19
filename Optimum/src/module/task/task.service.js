@@ -31,13 +31,13 @@ static async updateTaskStatus(id, status) {
     return await TaskModel.find();
   }
 
-//   static async updateAppointment(token_id, updateData) {
-//     return await AppointmentModel.findOneAndUpdate(
-//       { token_id },
-//       { $set: updateData },
-//       { new: true }
-//     );
-//   }
+  static async updateTask(_id, updateData) {
+    return await TaskModel.findOneAndUpdate(
+      { _id },
+      { $set: updateData },
+      { new: true }
+    );
+  }
 }
 
 export default TaskService;

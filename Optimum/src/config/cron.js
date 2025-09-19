@@ -1,12 +1,20 @@
+// cronJobs.js
 import cron from "node-cron";
 import TaskModel from "../module/task/task.model.js";
 
-cron.schedule("0 0 * * *", async () => {
-  // Runs every midnight
-  const today = new Date();
-  await TaskModel.updateMany(
-    { due_date: { $lt: today }, status: "doing" },
-    { $set: { status: "incomplete" } }
-  );
-  console.log("✅ Overdue tasks updated to 'incomplete'");
-});
+export const scheduleCronJobs = () => {
+  cron.schedule("* * * * *", async () => {
+    try {
+      console.log(new Date(), "Cron job started");
+      const today = new Date();
+      const result = await TaskModel.updateMany(
+        { due_date: { $lt: today }, status: "doing" },
+        { $set: { status: "incomplete" } }
+      );
+      console.log("Updated tasks count:", result.modifiedCount);
+      console.log("✅ Overdue tasks updated to 'incomplete'");
+    } catch (err) {
+      console.error("Cron job error:", err);
+    }
+  });
+};

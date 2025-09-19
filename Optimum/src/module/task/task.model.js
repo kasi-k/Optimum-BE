@@ -13,8 +13,8 @@ const CommentSchema = new mongoose.Schema(
 const taskSchema = new mongoose.Schema(
   {
     task_title: { type: String, unique: true },
-    start_date: { type: Date, required: true },
-    due_date: { type: Date, required: true },
+    start_date: { type: String, required: true },
+    due_date: { type: String, required: true },
     assigned_to: { type: String },
     attachments: [
       {
