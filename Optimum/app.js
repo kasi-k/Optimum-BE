@@ -14,6 +14,8 @@ import logger from "./src/config/logger.js";
 import employeeRoute from "./src/module/employee/employee.route.js";
 import appointmentRoute from "./src/module/appointment/appointment.route.js";
 import taskRoute from "./src/module/task/task.route.js";
+import campaignRoute from "./src/module/leads/campaign/campaign.route.js";
+import leadRoute from "./src/module/leads/lead/lead.route.js";
 
 dotenv.config();
 
@@ -48,6 +50,8 @@ app.use("/role", roleRoute);
 app.use("/employee", employeeRoute);
 app.use("/appointment", appointmentRoute);
 app.use("/task", taskRoute);
+app.use("/campaign", campaignRoute);
+app.use("/lead", leadRoute);
 
 app.get("/", (req, res) => {
   res.send(`Welcome to Optimum Backend`);
