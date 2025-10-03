@@ -2,18 +2,26 @@
 import TaskService from "./task.service.js";
 
 export const createTask = async (req, res) => {
-    
   try {
     const files = req.files || [];
     const data = { ...req.body, files };
-    const task = await TaskService.createTask(data);
-    res.status(201).json({ status: true, message: "Task created", data: task });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ status: false, message: err.message });
-  }
 
+    const task = await TaskService.createTask(data);
+
+    res.status(201).json({
+      status: true,
+      message: "Task created successfully",
+      data: task,
+    });
+  } catch (err) {
+    console.error("Error creating task:", err);
+    res.status(500).json({
+      status: false,
+      message: err.message,
+    });
+  }
 };
+
 
 // task.controller.js
 export const updateTaskStatus = async (req, res) => {

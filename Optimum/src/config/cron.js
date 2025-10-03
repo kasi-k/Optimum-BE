@@ -3,7 +3,7 @@ import cron from "node-cron";
 import TaskModel from "../module/task/task.model.js";
 
 export const scheduleCronJobs = () => {
-  cron.schedule("* * * * *", async () => {
+  cron.schedule("0 0 * * *", async () => {
     try {
       console.log(new Date(), "Cron job started");
       const today = new Date();

@@ -4,7 +4,7 @@ import { upload } from "../../config/multer.js";
 
 const taskRoute = Router();
 
-taskRoute.post("/add", upload.array("attachments",5), createTask);
+taskRoute.post("/add", upload.array("files"), createTask);
 taskRoute.patch("/updatetask/:id/status", updateTaskStatus);
 
 
