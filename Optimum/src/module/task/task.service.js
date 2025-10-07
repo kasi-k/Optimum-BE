@@ -4,17 +4,19 @@ import TaskModel from "./task.model.js";
 class TaskService {
   static async createTask(taskData) {
   const attachments = (taskData.files || []).map((file) => ({
-      fileName: file.originalname,
-      filePath: `/uploads/${file.filename}`,
-    }));
-  const { files, ...rest } = taskData;
-    const task = new TaskModel({
-      ...rest,
-      attachments,
-    });
+    fileName: file.originalname,
+    filePath: file.location, // multer-s3 provides `location` property
+  }));
 
-    return await task.save();
-  }
+  const { files, ...rest } = taskData;
+  const task = new TaskModel({
+    ...rest,
+    attachments,
+  });
+
+  return await task.save();
+}
+
 
 
 static async updateTaskStatus(id, status) {

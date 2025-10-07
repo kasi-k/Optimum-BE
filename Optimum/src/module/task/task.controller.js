@@ -1,8 +1,6 @@
 
 import TaskService from "./task.service.js";
-
 export const createTask = async (req, res) => {
-    
   try {
     const files = req.files || [];
     const data = { ...req.body, files };
@@ -12,8 +10,8 @@ export const createTask = async (req, res) => {
     console.error(err);
     res.status(500).json({ status: false, message: err.message });
   }
-
 };
+
 
 // task.controller.js
 export const updateTaskStatus = async (req, res) => {
