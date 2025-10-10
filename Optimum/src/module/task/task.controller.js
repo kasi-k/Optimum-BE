@@ -11,7 +11,14 @@ export const createTask = async (req, res) => {
     res.status(500).json({ status: false, message: err.message });
   }
 };
-
+// export const addComments = async (req, res) => {
+//   try {
+//     const data = await TaskService.addComments(req.params._id,req.body);
+//     res.status(201).json({ status: true, message: "Comment created", data });
+//   } catch (err) {
+//     res.status(500).json({ status: false, message: err.message });
+//   }
+// };
 
 // task.controller.js
 export const updateTaskStatus = async (req, res) => {
@@ -47,5 +54,18 @@ export const updateTask = async (req, res) => {
     res.status(200).json({ status: true, message: "Task updated", data });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
+  }
+};
+
+export const deletetask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await TaskService.deletetask(id);
+    res.status(200).json(result);
+  } catch (err) {
+    console.error("Delete task error:", err);
+    res
+      .status(400)
+      .json({ message: err.message || "Failed to delete task" });
   }
 };

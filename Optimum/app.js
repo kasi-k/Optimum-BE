@@ -16,6 +16,8 @@ import appointmentRoute from "./src/module/appointment/appointment.route.js";
 import taskRoute from "./src/module/task/task.route.js";
 import campaignRoute from "./src/module/leads/campaign/campaign.route.js";
 import leadRoute from "./src/module/leads/lead/lead.route.js";
+import doctorRoute from "./src/module/doctor/doctor.route.js";
+import hospitalRoute from "./src/module/hospital/hospital.route.js";
 
 dotenv.config();
 
@@ -52,6 +54,8 @@ app.use("/appointment", appointmentRoute);
 app.use("/task", taskRoute);
 app.use("/campaign", campaignRoute);
 app.use("/lead", leadRoute);
+app.use("/doctor", doctorRoute);
+app.use("/hospital", hospitalRoute);
 
 app.get("/", (req, res) => {
   res.send(`Welcome to Optimum Backend`);

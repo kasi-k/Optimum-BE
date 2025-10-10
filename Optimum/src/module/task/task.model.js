@@ -4,7 +4,7 @@ const CommentSchema = new mongoose.Schema(
   {
     date: { type: Date, required: true },
     time: { type: String, required: true },
-    commented_by: { type: String, required: true },
+    commented_by: { type: String, default:"Admin" },
     commments: { type: String, required: true },
   },
   { _id: false }
