@@ -16,10 +16,15 @@ const employeeSchema = new mongoose.Schema(
     phone: { type: String, default: "" },
     email: { type: String, default: "" },
     role_name: { type: String, default: "" },
-    role_id: {type: String, default: "" },
+    role_id: { type: String, default: "" },
+    password: { type: String },
     department: String,
-    inpatient: { type: String, default: "Yes" },
     status: { type: String, default: "ACTIVE" },
+    wfhApproved: { type: Boolean, default: false },
+    officeLocation: {
+      lat: { type: Number, required: true, default: 13.0514944 }, // example default
+      lng: { type: Number, required: true, default: 80.2226176 },
+    },
     created_by: String,
 
     // 📅 Attendance Added

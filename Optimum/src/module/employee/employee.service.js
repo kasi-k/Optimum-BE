@@ -1,48 +1,138 @@
+import { generatePassword } from "../../../utils/generatePassword.js";
+import { isWithinOffice } from "../../config/VerifyLocation.js";
 import IdcodeServices from "../idcode/idcode.service.js";
-import EmployeeModel from './employee.model.js'
-
+import RoleModel from "../role/role.model.js";
+import EmployeeModel from "./employee.model.js";
+import bcrypt from "bcryptjs";
 
 class EmployeeService {
-  // Create Employee
   static async addEmployee(employeeData) {
     const idname = "EMPLOYEE";
     const idcode = "EMP";
     await IdcodeServices.addIdCode(idname, idcode);
-    const employee_id = await IdcodeServices.generateCode(idname); // Generates unique code
+    const employee_id = await IdcodeServices.generateCode(idname);
     if (!employee_id) throw new Error("Failed to generate employee ID");
 
     const employee = new EmployeeModel({
       employee_id,
-      ...employeeData,
+      ...employeeData, // role is not included
     });
-    return await employee.save();
+
+    await employee.save();
+
+    return {
+      message: "Employee created successfully",
+      employee: {
+        id: employee._id,
+        employee_id: employee.employee_id,
+        name: employee.name,
+      },
+    };
+  }
+  static async loginEmployee(data) {
+    const { identifier, password, location } = data; // location = { lat, lng }
+
+    // 1️⃣ Find employee by email or phone
+    const employee = await EmployeeModel.findOne({
+      $or: [{ email: identifier }, { phone: identifier }],
+    });
+
+    if (!employee) throw new Error("Employee not found");
+
+    // 2️⃣ Check if employee has role assigned
+    if (!employee.role_id)
+      throw new Error("Role not assigned yet. Cannot login.");
+
+    // 3️⃣ Fetch role details
+    const role = await RoleModel.findOne({ role_id: employee.role_id });
+    if (!role) throw new Error("Role data not found");
+
+    // 4️⃣ Verify password
+    if (!employee.password)
+      throw new Error("Employee has no password assigned");
+    const isValid = await bcrypt.compare(password, employee.password);
+    if (!isValid) throw new Error("Invalid password");
+
+    // 5️⃣ Check office location if WFH not approved
+    if (!employee.wfhApproved) {
+      if (!location) throw new Error("Location required for office login");
+
+      if (!employee.officeLocation || employee.officeLocation.lat === undefined)
+        throw new Error(
+          "Employee office location not set. Cannot login at office."
+        );
+
+      const { lat: userLat, lng: userLng } = location;
+      const { lat: officeLat, lng: officeLng } = employee.officeLocation;
+
+      const allowed = isWithinOffice(
+        userLat,
+        userLng,
+        officeLat,
+        officeLng,
+        0.1
+      ); // 100 meters
+      if (!allowed)
+        throw new Error("Login allowed only within office location");
+    }
+
+    // 6️⃣ Return employee info with role
+    return {
+      message: "Login successful",
+      employee: {
+        id: employee._id,
+        employee_id: employee.employee_id,
+        name: employee.name,
+        email: employee.email,
+        role: {
+          role_id: role.role_id,
+          role_name: role.role_name,
+          accessLevels: role.accessLevels,
+        },
+        wfhApproved: employee.wfhApproved,
+        status: employee.status,
+      },
+    };
   }
 
-  // Get all employees
+  // Other existing methods...
   static async getAllEmployees() {
     return await EmployeeModel.find();
   }
 
-  // Get employee by ID
   static async getEmployeeById(employee_id) {
     return await EmployeeModel.findOne({ employee_id });
   }
 
-  // Get active employees
   static async getActiveEmployees() {
     return await EmployeeModel.find({ status: "ACTIVE" });
   }
 
-  // Update employee
   static async updateEmployee(employee_id, updateData) {
-    return await EmployeeModel.findOneAndUpdate(
+    const employee = await EmployeeModel.findOne({ employee_id });
+    if (!employee) throw new Error("Employee not found");
+
+    let plainPassword, hashedPassword;
+
+    // Generate password only if role is assigned now and employee had no role before
+    if (updateData.role_name && !employee.role_name) {
+      plainPassword = generatePassword(employee.name, employee_id);
+      hashedPassword = await bcrypt.hash(plainPassword, 10);
+      updateData.password = hashedPassword;
+    }
+
+    const updatedEmployee = await EmployeeModel.findOneAndUpdate(
       { employee_id },
       { $set: updateData },
       { new: true }
     );
+
+    return {
+      employee: updatedEmployee,
+      ...(plainPassword && { generatedPassword: plainPassword }),
+    };
   }
 
-  // Delete employee
   static async deleteEmployee(employee_id) {
     return await EmployeeModel.findOneAndDelete({ employee_id });
   }
@@ -55,7 +145,7 @@ class EmployeeService {
         { contact_email: { $regex: keyword, $options: "i" } },
         { contact_phone: { $regex: keyword, $options: "i" } },
         { site_assigned: { $regex: keyword, $options: "i" } },
-      ]
+      ],
     });
   }
 
@@ -93,7 +183,7 @@ class EmployeeService {
     return { total, employees };
   }
 
-    static async markAttendance(employee_id, date, present, remarks = "") {
+  static async markAttendance(employee_id, date, present, remarks = "") {
     return await EmployeeModel.updateOne(
       { employee_id, "daily_attendance.date": { $ne: date } },
       { $push: { daily_attendance: { date, present, remarks } } }
@@ -107,8 +197,8 @@ class EmployeeService {
       {
         $set: {
           "daily_attendance.$.present": present,
-          "daily_attendance.$.remarks": remarks
-        }
+          "daily_attendance.$.remarks": remarks,
+        },
       }
     );
   }
@@ -123,8 +213,7 @@ class EmployeeService {
     if (!emp) return null;
 
     return emp.daily_attendance.filter(
-      (att) =>
-        att.date >= new Date(startDate) && att.date <= new Date(endDate)
+      (att) => att.date >= new Date(startDate) && att.date <= new Date(endDate)
     );
   }
 }

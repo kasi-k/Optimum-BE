@@ -10,6 +10,15 @@ export const createEmployee = async (req, res) => {
   }
 };
 
+export const loginEmployee = async (req, res) => {
+  try {
+    const result = await EmployeeService.loginEmployee(req.body);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(401).json({ message: error.message });
+  }
+};
 // Get All Employees
 export const getAllEmployees = async (req, res) => {
   try {
@@ -24,7 +33,10 @@ export const getAllEmployees = async (req, res) => {
 export const getEmployeeById = async (req, res) => {
   try {
     const data = await EmployeeService.getEmployeeById(req.params.employee_id);
-    if (!data) return res.status(404).json({ status: false, message: "Employee not found" });
+    if (!data)
+      return res
+        .status(404)
+        .json({ status: false, message: "Employee not found" });
     res.status(200).json({ status: true, data });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
@@ -44,8 +56,14 @@ export const getActiveEmployees = async (req, res) => {
 // Update Employee
 export const updateEmployee = async (req, res) => {
   try {
-    const data = await EmployeeService.updateEmployee(req.params.employee_id, req.body);
-    if (!data) return res.status(404).json({ status: false, message: "Employee not found" });
+    const data = await EmployeeService.updateEmployee(
+      req.params.employee_id,
+      req.body
+    );
+    if (!data)
+      return res
+        .status(404)
+        .json({ status: false, message: "Employee not found" });
     res.status(200).json({ status: true, message: "Employee updated", data });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
@@ -56,7 +74,10 @@ export const updateEmployee = async (req, res) => {
 export const deleteEmployee = async (req, res) => {
   try {
     const data = await EmployeeService.deleteEmployee(req.params.employee_id);
-    if (!data) return res.status(404).json({ status: false, message: "Employee not found" });
+    if (!data)
+      return res
+        .status(404)
+        .json({ status: false, message: "Employee not found" });
     res.status(200).json({ status: true, message: "Employee deleted" });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
@@ -95,7 +116,7 @@ export const getEmployeesPaginated = async (req, res) => {
       currentPage: page,
       totalPages: Math.ceil(data.total / limit),
       totalRecords: data.total,
-      data: data.employees
+      data: data.employees,
     });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
@@ -112,7 +133,9 @@ export const markAttendance = async (req, res) => {
       present,
       remarks
     );
-    res.status(200).json({ status: true, message: "Attendance marked", result });
+    res
+      .status(200)
+      .json({ status: true, message: "Attendance marked", result });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
@@ -127,7 +150,9 @@ export const updateAttendance = async (req, res) => {
       present,
       remarks
     );
-    res.status(200).json({ status: true, message: "Attendance updated", result });
+    res
+      .status(200)
+      .json({ status: true, message: "Attendance updated", result });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
@@ -146,4 +171,3 @@ export const getAttendance = async (req, res) => {
     res.status(500).json({ status: false, message: error.message });
   }
 };
-

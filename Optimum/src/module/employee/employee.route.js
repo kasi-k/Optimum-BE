@@ -10,13 +10,15 @@ import {
   getEmployeesPaginated,
   markAttendance,
   updateAttendance,
-  getAttendance
+  getAttendance,
+  loginEmployee
 } from "./employee.controller.js";
 
 const employeeRoute = Router();
 
 // Create
 employeeRoute.post("/add", createEmployee);
+employeeRoute.post("/login", loginEmployee);
 
 // Read
 employeeRoute.get("/getallemployees", getAllEmployees);
