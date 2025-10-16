@@ -13,17 +13,23 @@ const employeeSchema = new mongoose.Schema(
   {
     employee_id: { type: String, unique: true },
     name: { type: String, required: true },
+    dob: { type: Date, required: true },
+    address: { type: String, required: true },
+    gender: { type: String, required: true },
     phone: { type: String, default: "" },
-    email: { type: String, default: "" },
+    email: { type: String, default: "", unique: true },
     role_name: { type: String, default: "" },
     role_id: { type: String, default: "" },
     password: { type: String },
-    department: String,
+    language: { type: String },
+    rpperson: { type: String },
+    lastlogin: { type: Date },
+    department: { type: String },
     status: { type: String, default: "ACTIVE" },
     wfhApproved: { type: Boolean, default: false },
     officeLocation: {
-      lat: { type: Number, required: true, default: 13.0514944 }, // example default
-      lng: { type: Number, required: true, default: 80.2226176 },
+      lat: { type: Number, required: true, default: 9.9272833 }, // example default
+      lng: { type: Number, required: true, default: 78.2134346 },
     },
     created_by: String,
 

@@ -2,8 +2,18 @@ import { generatePassword } from "../../../utils/generatePassword.js";
 import { isWithinOffice } from "../../config/VerifyLocation.js";
 import IdcodeServices from "../idcode/idcode.service.js";
 import RoleModel from "../role/role.model.js";
+import TaskModel from "../task/task.model.js";
 import EmployeeModel from "./employee.model.js";
 import bcrypt from "bcryptjs";
+
+function maskEmail(email) {
+  if (!email) return "";
+  const [user, domain] = email.split("@");
+  if (!domain) return "****"; // fallback if invalid email
+  if (user.length <= 2) return `**@${domain}`;
+  const first = user.slice(0, 1);
+  return `${first}*****@${domain}`;
+}
 
 class EmployeeService {
   static async addEmployee(employeeData) {
@@ -52,7 +62,16 @@ class EmployeeService {
       throw new Error("Employee has no password assigned");
     const isValid = await bcrypt.compare(password, employee.password);
     if (!isValid) throw new Error("Invalid password");
+       // Save previous login time
+    const previousLogin = employee.lastlogin || null;
 
+    // Update last login to current time
+    employee.lastlogin = new Date();
+    await employee.save();
+    const empId = employee.employee_id.trim();
+    const tasks = await TaskModel.find({
+      assigned_to: { $regex: `^${empId}$`, $options: "i" },
+    });
     // 5️⃣ Check office location if WFH not approved
     if (!employee.wfhApproved) {
       if (!location) throw new Error("Location required for office login");
@@ -83,7 +102,7 @@ class EmployeeService {
         id: employee._id,
         employee_id: employee.employee_id,
         name: employee.name,
-        email: employee.email,
+        email: maskEmail(employee.email),
         role: {
           role_id: role.role_id,
           role_name: role.role_name,
@@ -91,6 +110,9 @@ class EmployeeService {
         },
         wfhApproved: employee.wfhApproved,
         status: employee.status,
+        tasks,
+           lastlogin: previousLogin,
+        
       },
     };
   }

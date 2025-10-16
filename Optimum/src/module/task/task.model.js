@@ -15,7 +15,8 @@ const taskSchema = new mongoose.Schema(
     task_title: { type: String, unique: true },
     start_date: { type: String, required: true },
     due_date: { type: String, required: true },
-    assigned_to: { type: String },
+    assigned_to: [{ type: String }],
+    employee_id:{type:String},
     attachments: [
       {
         fileName: String,

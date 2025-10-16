@@ -37,15 +37,28 @@ export const updateTaskStatus = async (req, res) => {
   }
 };
 
-
 export const getAllTasks = async (req, res) => {
   try {
-    const data = await TaskService.getAllTasks();
+    const { role_name, employee_id } = req.query; // coming from frontend query params
+
+    let data;
+
+    if (role_name === "admin") {
+      // 👨‍💼 Admin sees all tasks
+      data = await TaskService.getAllTasks();
+    } else {
+      // 👷 Employee sees only tasks assigned to them
+      data = await TaskService.getTasksByEmployee(employee_id);
+    }
+
     res.status(200).json({ status: true, data });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
 };
+
+
+
 
 export const updateTask = async (req, res) => {
   try {
