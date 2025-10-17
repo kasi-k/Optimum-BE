@@ -4,7 +4,8 @@ const dailyAttendanceSchema = new mongoose.Schema(
   {
     date: { type: Date, required: true }, // The day attendance is recorded
     present: { type: Boolean, required: true }, // true = Present, false = Absent
-    remarks: String, // Optional: late, leave, overtime, etc.
+    remarks: String,
+    // Optional: late, leave, overtime, etc.
   },
   { _id: false }
 );

@@ -3,7 +3,6 @@ import {
   createEmployee,
   getAllEmployees,
   getEmployeeById,
-  getActiveEmployees,
   updateEmployee,
   deleteEmployee,
   searchEmployees,
@@ -11,7 +10,8 @@ import {
   markAttendance,
   updateAttendance,
   getAttendance,
-  loginEmployee
+  loginEmployee,
+  changePasswordController
 } from "./employee.controller.js";
 
 const employeeRoute = Router();
@@ -19,13 +19,14 @@ const employeeRoute = Router();
 // Create
 employeeRoute.post("/add", createEmployee);
 employeeRoute.post("/login", loginEmployee);
+employeeRoute.put("/changepassword", changePasswordController);
 
 // Read
 employeeRoute.get("/getallemployees", getAllEmployees);
 employeeRoute.get("/getemployee/:employee_id", getEmployeeById);
-employeeRoute.get("/getactiveemployees", getActiveEmployees);
+// employeeRoute.get("/getactiveemployees", getActiveEmployees);
 
-// Search
+
 employeeRoute.get("/searchemployees", searchEmployees);
 
 // Update
@@ -39,6 +40,7 @@ employeeRoute.get("/getemployees", getEmployeesPaginated);
 
 employeeRoute.post("/markattendance/:employee_id", markAttendance);
 employeeRoute.put("/updateattendance/:employee_id", updateAttendance);
-employeeRoute.get("/getattendance/:employee_id", getAttendance);
+employeeRoute.get("/getattendance", getAttendance);
+
 
 export default employeeRoute;

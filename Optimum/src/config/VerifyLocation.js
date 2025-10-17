@@ -1,7 +1,7 @@
 
 
 // utils/checkLocation.js
-export const isWithinOffice = (userLat, userLng, officeLat, officeLng, radius = 0.1) => {
+export const isWithinOffice = (userLat, userLng, officeLat, officeLng, radius = 0.5) => {
   const toRad = (value) => (value * Math.PI) / 180;
 
   const R = 6371; // Earth radius in km
