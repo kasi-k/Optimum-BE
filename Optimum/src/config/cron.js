@@ -18,3 +18,14 @@ export const scheduleCronJobs = () => {
     }
   });
 };
+export const scheduleCronWFH = () => {
+  cron.schedule("0 0 * * *", async () => {
+    try {
+      console.log("Running WFH auto-reset job...");
+      await WFHService.resetExpiredWFH();
+      console.log("WFH auto-reset completed!");
+    } catch (err) {
+      console.error("Error in WFH auto-reset:", err.message);
+    }
+  });
+};

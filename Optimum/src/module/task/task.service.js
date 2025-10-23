@@ -1,28 +1,55 @@
 import TaskModel from "./task.model.js";
 import EmployeeModel from "../employee/employee.model.js";
+import NotificationService from "../notifications/notify.service.js";
 
 class TaskService {
   // Create a task
-  static async createTask(taskData) {
-    const attachments = (taskData.files || []).map((file) => ({
-      fileName: file.originalname,
-      filePath: file.location, // multer-s3 provides `location` property
-    }));
+ static async createTask(taskData) {
+  const attachments = (taskData.files || []).map((file) => ({
+    fileName: file.originalname,
+    filePath: file.location, // multer-s3 provides `location` property
+  }));
 
-    let assignedUsers = taskData.assigned_to;
-    if (typeof assignedUsers === "string")
-      assignedUsers = assignedUsers.split(",");
-    if (!Array.isArray(assignedUsers)) assignedUsers = [assignedUsers];
+  let assignedUsers = taskData.assigned_to;
+  if (typeof assignedUsers === "string")
+    assignedUsers = assignedUsers.split(",");
+  if (!Array.isArray(assignedUsers)) assignedUsers = [assignedUsers];
 
-    const { files, ...rest } = taskData;
-    const task = new TaskModel({
-      ...rest,
-      attachments,
-      assigned_to: assignedUsers,
-    });
+  const { files, ...rest } = taskData;
+  const task = new TaskModel({
+    ...rest,
+    attachments,
+    assigned_to: assignedUsers,
+  });
 
-    return await task.save();
+  const savedTask = await task.save();
+
+  // ----------------- Notifications -----------------
+  for (const empId of assignedUsers) {
+    const employee = await EmployeeModel.findOne({ employee_id: empId });
+    if (employee) {
+      await NotificationService.createNotification({
+        title: "New Task Assigned",
+        message: `A new task "${task.task_title}" has been assigned to you.`,
+        employeeId: employee.employee_id,
+        createdBy: null, // or pass admin ID who created the task
+      });
+    }
   }
+
+  // Optional: notify all admins
+  const admins = await EmployeeModel.find({ role_name: "admin" });
+  for (const admin of admins) {
+    await NotificationService.createNotification({
+      title: "Task Assigned",
+      message: `Task "${task.task_title}" assigned to ${assignedUsers.join(", ")}.`,
+      employeeId: admin.employee_id,
+      createdBy: null,
+    });
+  }
+
+  return savedTask;
+}
 
   // Update task status
   static async updateTaskStatus(id, status) {
