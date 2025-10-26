@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  addComments,
   createTask,
   deletetask,
   getAllTasks,
@@ -11,7 +12,7 @@ import { upload } from "../../config/multer.js";
 const taskRoute = Router();
 
 taskRoute.post("/add", upload.array("attachments", 5), createTask);
-// taskRoute.post("/addcomment/:id", addComments);
+taskRoute.post("/addcomment/:_id", addComments);
 taskRoute.patch("/updatetask/:id/status", updateTaskStatus);
 
 taskRoute.get("/getalltasks", getAllTasks);

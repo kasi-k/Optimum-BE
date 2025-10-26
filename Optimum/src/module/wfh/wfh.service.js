@@ -56,9 +56,9 @@ class WFHService {
     request.status = action;
     request.wfhApproved = action === "APPROVED";
     await request.save();
-
+    const today = new Date();
     // Update employee document if approved
-    if (action === "APPROVED") {
+    if(action === "APPROVED" && new Date(request.date) <= today) {
       await EmployeeModel.findOneAndUpdate(
         { employee_id: request.employee_id },
         { wfhApproved: true }

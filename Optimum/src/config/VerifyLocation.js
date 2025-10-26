@@ -14,8 +14,8 @@ export const isWithinOffice = (userLat, userLng, officeLat, officeLng, radius = 
     Math.cos(toRad(officeLat)) *
     Math.sin(dLng / 2) ** 2;
 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c; // distance in km
+  const distance = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
 
   return distance <= radius; // true if within radius
 };

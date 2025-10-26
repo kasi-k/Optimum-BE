@@ -11,14 +11,26 @@ export const createTask = async (req, res) => {
     res.status(500).json({ status: false, message: err.message });
   }
 };
-// export const addComments = async (req, res) => {
-//   try {
-//     const data = await TaskService.addComments(req.params._id,req.body);
-//     res.status(201).json({ status: true, message: "Comment created", data });
-//   } catch (err) {
-//     res.status(500).json({ status: false, message: err.message });
-//   }
-// };
+export const addComments = async (req, res) => {
+  try {
+    const taskId = req.params._id;
+    const commentData = req.body;
+
+    const updatedTask = await TaskService.addComments(taskId, commentData);
+
+    res.status(201).json({
+      status: true,
+      message: "Comment added and notifications sent",
+      data: updatedTask,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: err.message || "Failed to add comment",
+    });
+  }
+};
+
 
 // task.controller.js
 export const updateTaskStatus = async (req, res) => {
