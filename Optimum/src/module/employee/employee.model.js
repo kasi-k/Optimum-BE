@@ -28,6 +28,7 @@ const employeeSchema = new mongoose.Schema(
     department: { type: String },
     status: { type: String, default: "ACTIVE" },
     wfhApproved: { type: Boolean, default: false },
+    leaveApproved: { type: Boolean, default: false },
     officeLocation: {
       lat: { type: Number, required: true, default: 9.9272833 }, // example default
       lng: { type: Number, required: true, default: 78.2134346 },

@@ -20,6 +20,7 @@ import doctorRoute from "./src/module/doctor/doctor.route.js";
 import hospitalRoute from "./src/module/hospital/hospital.route.js";
 import notificationRoute from "./src/module/notifications/notify.route.js";
 import WFHRoute from "./src/module/wfh/wfh.route.js";
+import LeaveRoute from "./src/module/leave/leave.route.js";
 
 dotenv.config();
 
@@ -60,6 +61,7 @@ app.use("/doctor", doctorRoute);
 app.use("/hospital", hospitalRoute);
 app.use("/notify", notificationRoute);
 app.use("/wfh", WFHRoute);
+app.use("/leave", LeaveRoute);
 
 app.get("/", (req, res) => {
   res.send(`Welcome to Optimum Backend`);
