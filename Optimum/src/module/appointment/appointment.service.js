@@ -1,6 +1,7 @@
 import IdcodeServices from "../idcode/idcode.service.js";
 import CampaignModel from "../leads/campaign/campaign.model.js";
 import CampaignService from "../leads/campaign/campaign.service.js";
+import LeadModel from "../leads/lead/lead.model.js";
 import AppointmentModel from "./appointment.model.js";
 
 class AppointmentService {
@@ -83,6 +84,18 @@ class AppointmentService {
 
     campaign.appointments.push(newappointment._id);
     await campaign.save();
+
+     if (appointmentData.lead_id) {
+    await LeadModel.findOneAndUpdate(
+      { lead_id: appointmentData.lead_id },
+      {
+        $set: {
+          status: "converted",
+          convertedAt: new Date(),
+        },
+      }
+    );
+  }
 
     return newappointment;
   }

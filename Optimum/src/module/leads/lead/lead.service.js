@@ -1,78 +1,108 @@
-import IdcodeServices from "../../idcode/idcode.service.js";
-import LeadModel from "../../leads/lead/lead.model.js";
+import LeadModel from "./lead.model.js";
 import CampaignModel from "../campaign/campaign.model.js";
+import IdcodeServices from "../../idcode/idcode.service.js";
+import NotificationModel from "../../notifications/notify.model.js"
+import EmployeeModel from "../../employee/employee.model.js";
+
+
 
 class LeadService {
+  // ===============================
+  // CREATE LEAD
+  // ===============================
   static async createLead(leadData) {
     const idname = "Leads";
     const idcode = "L";
 
-    // 1️⃣ generate incremental code
     await IdcodeServices.addIdCode(idname, idcode);
-    const Lead_id = await IdcodeServices.generateCode(idname);
-    if (!Lead_id) throw new Error("Failed to generate lead ID");
+    const lead_id = await IdcodeServices.generateCode(idname);
+    if (!lead_id) throw new Error("Failed to generate lead ID");
 
-    // 2️⃣ find campaign using campaign_id (e.g., "Camp001")
     const campaign = await CampaignModel.findOne({
       campaign_id: leadData.campaign_id,
     });
     if (!campaign) throw new Error("Campaign not found");
 
-    // 3️⃣ create lead
-    const newLead = await LeadModel.create({
+    const lead = await LeadModel.create({
       ...leadData,
-      lead_id: Lead_id, // 👈 store generated lead code
-      campaign: campaign._id, // ObjectId reference
-      campaign_id: campaign.campaign_id, // also store readable campaign_id
+      lead_id,
+      campaign: campaign._id,
+      campaign_id: campaign.campaign_id,
     });
 
-    // 4️⃣ update campaign with this lead reference
-    campaign.leads.push(newLead._id);
+    campaign.leads.push(lead._id);
     await campaign.save();
 
-    return newLead;
-  }
-  static async getAllLeads() {
-    return await LeadModel.find();
+    return lead;
   }
 
-  //   static async getLeadsByCampaignId(campaignId) {
-  //     const campaign = await CampaignModel.findOne({
-  //       campaign_id: campaignId,
-  //     }).populate("leads");
-  //     if (!campaign) throw new Error("Campaign not found");
-  //     return campaign.leads;
-  //   }
-
-  // Update BD name for multiple leads
-  static async transferLeads(leadIds, bdname) {
-    if (!leadIds || leadIds.length === 0) {
-      throw new Error("No leads selected");
-    }
-    if (!bdname) {
-      throw new Error("BD name is required");
+  // ===============================
+  // GET LEADS BASED ON ROLE
+  // ===============================
+  static async getLeadsByRole(role_name, name) {
+    // ADMIN → all leads
+    if (role_name === "admin") {
+      return await LeadModel.find().populate("campaign");
     }
 
-    const result = await LeadModel.updateMany(
-      { lead_id: { $in: leadIds } },
-      { $set: { bdname } }
-    );
-
-    return result; // result.modifiedCount contains number of updated docs
+    // BD / Employee → only their leads
+    return await LeadModel.find({ bdname: name }).populate("campaign");
   }
 
+  // ===============================
+  // TRANSFER LEADS
+  // ===============================
+static async transferLeads(leadIds, bdname) {
+  if (!leadIds?.length) {
+    throw new Error("No leads selected");
+  }
+  if (!bdname) {
+    throw new Error("BD name is required");
+  }
+
+  // 🔍 FIND BD USING NAME
+  const bd = await EmployeeModel.findOne({
+    name: bdname,
+    role_name: "bd",
+  });
+
+  console.log(bd);
+  
+
+  if (!bd) {
+    throw new Error("BD not found for given name");
+  }
+
+  // 1️⃣ Update leads
+  await LeadModel.updateMany(
+    { lead_id: { $in: leadIds } },
+    {
+      $set: {
+        bdname
+      },
+    }
+  );
+
+  // 2️⃣ Create notification
+  await NotificationModel.create({
+    title: "New Leads Assigned",
+    message: `You have been assigned ${leadIds.length} new lead(s).`,
+    employeeId: bd.employee_id,
+  });
+
+  return true;
+}
+  // ===============================
+  // DELETE LEAD
+  // ===============================
   static async deleteLead(leadId) {
     const lead = await LeadModel.findById(leadId);
     if (!lead) throw new Error("Lead not found");
 
-    // Remove the lead from the campaign's leads array
-    await CampaignModel.findByIdAndUpdate(
-      lead.campaign,
-      { $pull: { leads: lead._id } },
-      { new: true }
-    );
+    await CampaignModel.findByIdAndUpdate(lead.campaign, {
+      $pull: { leads: lead._id },
+    });
 
-    // Delete the lead document
     await LeadModel.findByIdAndDelete(leadId);
 
     return { message: "Lead deleted successfully" };

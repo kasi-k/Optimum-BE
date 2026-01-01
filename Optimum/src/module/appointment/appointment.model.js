@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import "../leads/campaign/campaign.model.js";
+import "../leads/lead/lead.model.js";
 
 const appointmentSchema = new mongoose.Schema(
   {
@@ -27,6 +28,8 @@ const appointmentSchema = new mongoose.Schema(
     ipd_number: { type: String, unique: true, sparse: true },
     campaign: { type: mongoose.Schema.Types.ObjectId, ref: "Campaigns" },
     campaign_id: { type: String },
+    lead: { type: mongoose.Schema.Types.ObjectId, ref: "Leads" },
+    lead_id: { type: String },
     status: {
       type: String,
       enum: ["Pending", "Completed", "Confirmed", "Cancelled"], // optional but recommended

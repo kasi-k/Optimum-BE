@@ -1,6 +1,9 @@
-import LeadService from "../../leads/lead/lead.service.js";
-import LeadModel from "./lead.model.js";
+import LeadService from "./lead.service.js";
+import jwt from "jsonwebtoken";
 
+// ===============================
+// CREATE LEAD
+// ===============================
 export const createLead = async (req, res) => {
   try {
     const lead = await LeadService.createLead(req.body);
@@ -10,54 +13,65 @@ export const createLead = async (req, res) => {
   }
 };
 
+
+
+
+
 export const getAllLeads = async (req, res) => {
   try {
-    const data = await LeadService.getAllLeads();
-    res.status(200).json({ status: true, data });
+    const { role_name, name } = req.query;
+
+    if (!role_name || !name) {
+      return res.status(400).json({
+        status: false,
+        message: "role_name and name are required",
+      });
+    }
+
+    const leads = await LeadService.getLeadsByRole(role_name, name);
+
+    res.status(200).json({
+      status: true,
+      data: leads,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
+
+
+
+// ===============================
+// TRANSFER LEADS
+// ===============================
+export const transferLeads = async (req, res) => {
+  try {
+    const { leadIds, bdname } = req.body;
+
+    await LeadService.transferLeads(leadIds, bdname);
+
+    res.status(200).json({
+      status: true,
+      message: "Leads transferred successfully & Notification sent to BD",
+    });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
 };
 
-// export const getLeadsByCampaign = async (req, res) => {
-//   try {
-//     const leads = await LeadService.getLeadsByCampaignId(req.params.campaign_id);
-//     res.status(200).json({ status: true, data: leads });
-//   } catch (error) {
-//     res.status(404).json({ status: false, message: error.message });
-//   }
-// };
-
-export const transferLeads = async (req, res) => {
-  try {
-    const { leadIds, bdname } = req.body;
-
-    if (!leadIds || leadIds.length === 0) {
-      return res.status(400).json({ message: "No leads selected" });
-    }
-    if (!bdname) {
-      return res.status(400).json({ message: "BD name is required" });
-    }
-
-    // Update multiple leads
-    const result = await LeadModel.updateMany(
-      { lead_id: { $in: leadIds } },
-      { $set: { bdname } }
-    );
-
-    return res.status(200).json({
-      message: `${result.modifiedCount} lead(s) updated successfully`,
-    });
-  } catch (error) {
-    console.error("Error transferring leads:", error);
-    return res.status(500).json({ message: "Server error" });
-  }
-};
+// ===============================
+// DELETE LEAD
+// ===============================
 export const deleteLead = async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await LeadService.deleteLead(id);
-    res.status(200).json({ status: true, message: result.message });
+    await LeadService.deleteLead(req.params.id);
+    res.status(200).json({ status: true, message: "Lead deleted successfully" });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
