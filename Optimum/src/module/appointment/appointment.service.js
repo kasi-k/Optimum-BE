@@ -14,8 +14,8 @@ class AppointmentService {
     if (!token_id) throw new Error("Failed to generate token ID");
 
     // Generate OPD/IPD numbers if applicable
-    let opd_number = null;
-    let ipd_number = null;
+    let opd_number ;
+    let ipd_number ;
 
     if (appointmentData.patient_type === "OPD") {
       const opdName = "OPD";
@@ -50,8 +50,8 @@ class AppointmentService {
     if (!token_id) throw new Error("Failed to generate Token ID");
 
     // Generate OPD/IPD numbers
-    let opd_number = null;
-    let ipd_number = null;
+    let opd_number ;
+    let ipd_number ;
 
     if (appointmentData.patient_type === "OPD") {
       const opdName = "OPD";

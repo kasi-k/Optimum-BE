@@ -107,6 +107,72 @@ static async transferLeads(leadIds, bdname) {
 
     return { message: "Lead deleted successfully" };
   }
+
+  static async addFollowUp({ lead_id, follow_up_date, notes, createdBy }) {
+  const lead = await LeadModel.findOne({ lead_id });
+
+  if (!lead) throw new Error("Lead not found");
+
+await LeadModel.updateOne(
+  { lead_id },
+  {
+    $push: {
+      follow_up: {
+        follow_up_date,
+        notes,
+        createdBy,
+      },
+    },
+    $set: { status: "follow-up" },
+  }
+);
+
+
+
+
+  return lead.follow_up.at(-1);
+}
+
+
+static async getFollowUpsByLead(leadId) {
+  const lead = await LeadModel.findOne(
+    { lead_id: leadId },
+    { follow_up: 1, _id: 0 }
+  );
+
+  if (!lead) throw new Error("Lead not found");
+
+  return lead.follow_up.sort(
+    (a, b) => new Date(a.follow_up_date) - new Date(b.follow_up_date)
+  );
+}
+
+static async uploadDocuments(leadId, files) {
+  const documents = files.map((file) => ({
+    fileName: file.originalname,
+    fileType: file.mimetype,
+    fileKey: file.key,        // S3 key
+    fileUrl: file.location,   // S3 public URL
+  }));
+
+  return LeadModel.findOneAndUpdate(
+    { lead_id: leadId },
+    { $push: { documents: { $each: documents } } },
+    { new: true }
+  );
+}
+
+  static async getDocumentsByLead(leadId) {
+    const lead = await LeadModel.findOne({ lead_id: leadId }).select("documents");
+
+    if (!lead) {
+      throw new Error("Lead not found");
+    }
+
+    return lead.documents || [];
+  }
+
+
 }
 
 export default LeadService;

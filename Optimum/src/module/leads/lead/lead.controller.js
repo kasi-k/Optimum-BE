@@ -76,3 +76,79 @@ export const deleteLead = async (req, res) => {
     res.status(500).json({ status: false, message: error.message });
   }
 };
+
+
+
+
+
+export const addFollowUp = async (req, res) => {
+  try {
+    const followUp = await LeadService.addFollowUp(req.body);
+
+    res.status(201).json({
+      status: true,
+      message: "Follow-up added successfully",
+      data: followUp,
+    });
+
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
+export const getFollowUpsByLead = async (req, res) => {
+  try {
+    const data = await LeadService.getFollowUpsByLead(req.params.leadId);
+
+    res.status(200).json({
+      status: true,
+      data,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+
+export const uploadLeadDocuments = async (req, res) => {
+  try {
+    const { leadId } = req.body;
+
+    if (!req.files || !req.files.length) {
+      return res.status(400).json({ status: false, message: "No files uploaded" });
+    }
+
+    const data = await LeadService.uploadDocuments(leadId, req.files);
+
+    res.status(200).json({ status: true, data });
+  } catch (error) {
+    res.status(400).json({ status: false, message: error.message });
+  }
+};
+
+export const getLeadDocuments = async (req, res) => {
+  try {
+    const documents = await LeadService.getDocumentsByLead(
+      req.params.leadId
+    );
+
+    res.status(200).json({
+      status: true,
+      data: documents,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+

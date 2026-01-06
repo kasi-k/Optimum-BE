@@ -1,6 +1,15 @@
 import { Router } from "express";
-import { createLead, deleteLead, getAllLeads, transferLeads } from "./lead.controller.js";
-
+import {
+  addFollowUp,
+  createLead,
+  deleteLead,
+  getAllLeads,
+  getFollowUpsByLead,
+  getLeadDocuments,
+  transferLeads,
+  uploadLeadDocuments,
+} from "./lead.controller.js";
+import { upload } from "../../../config/multer.js";
 
 const leadRoute = Router();
 
@@ -11,6 +20,14 @@ leadRoute.get("/getallleads", getAllLeads);
 leadRoute.put("/transferleads", transferLeads);
 leadRoute.delete("/:id", deleteLead);
 
+leadRoute.post("/followup/add", addFollowUp);
+leadRoute.get("/getfollowup/:leadId", getFollowUpsByLead);
 
+leadRoute.post(
+  "/upload-documents",
+  upload.array("documents", 5),
+  uploadLeadDocuments
+);
+leadRoute.get("/:leadId/documents", getLeadDocuments);
 
 export default leadRoute;
