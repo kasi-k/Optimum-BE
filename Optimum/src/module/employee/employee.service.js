@@ -144,6 +144,8 @@ class EmployeeService {
           role_id: role.role_id,
           role_name: role.role_name,
           accessLevels: role.accessLevels,
+          department_name: role.department_name,
+          category_name: role.category_name,
         },
         wfhApproved: employee.wfhApproved,
         status: employee.status,

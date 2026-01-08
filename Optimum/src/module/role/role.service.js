@@ -3,73 +3,73 @@ import logger from "../../config/logger.js";
 import EmployeeModel from "../employee/employee.model.js";
 
 class RoleService {
-  static async addRole(userRole) {
+  static async addRole(roleData) {
     try {
-      const newRoles = new RoleModel({
-        ...userRole,
-      });
-
-      const role = await newRoles.save();
-      return role;
+      const newRole = new RoleModel(roleData);
+      return await newRole.save();
     } catch (error) {
-    logger.error("error while adding a role" + error);
-      console.log("Error in creating Role");
+      logger.error("Error adding role: " + error);
+      throw error;
     }
   }
+
   static async getRolesById(roleId) {
     try {
       return await RoleModel.findOne({ role_id: roleId });
     } catch (error) {
-      console.log("Error in creating Role", error);
-      logger.error("error while getting a role" + error);
+      logger.error("Error getting role by ID: " + error);
+      throw error;
     }
   }
-  static async getAllRoles() {
+
+  static async getAllRoles(filters = {}) {
     try {
-      return await RoleModel.find();
+      return await RoleModel.find(filters);
     } catch (error) {
-      logger.error("error while getting all roles" + error);
+      logger.error("Error getting all roles: " + error);
+      throw error;
     }
   }
-   static async getAllRolesActive() {
+
+  static async getRolesByDeptCat(department_id, category_id) {
     try {
-      return await RoleModel.find({status:'ACTIVE'});
+      return await RoleModel.find({
+        department_id,
+        category_id,
+        status: "ACTIVE",
+      });
     } catch (error) {
-      logger.error("error while getting all active roles" + error);
+      logger.error("Error getting roles by dept & category: " + error);
+      throw error;
     }
   }
+
   static async updateRole(role_id, updatedData) {
     try {
-      return await RoleModel.findOneAndUpdate(
-        { role_id: role_id },
-        { $set: updatedData },
-        { new: true }
-      );
+      return await RoleModel.findOneAndUpdate({ role_id }, { $set: updatedData }, { new: true });
     } catch (error) {
-      logger.error("error while updating a role" + error);
+      logger.error("Error updating role: " + error);
+      throw error;
     }
   }
-static async deleteRole(role_id) {
-  try {
-    // 1️⃣ Delete the role
-    const deletedRole = await RoleModel.findOneAndDelete({ role_id });
-    if (!deletedRole) {
-      throw new Error("Role not found");
+
+  static async deleteRole(role_id) {
+    try {
+      const deletedRole = await RoleModel.findOneAndDelete({ role_id });
+      if (!deletedRole) throw new Error("Role not found");
+
+      // Unassign role from employees
+      await EmployeeModel.updateMany(
+        { role_id },
+        { $unset: { role_id: "", role_name: "" } }
+      );
+
+      return deletedRole;
+    } catch (error) {
+      logger.error("Error deleting role: " + error);
+      throw error;
     }
-
-    // 2️⃣ Unassign this role from all employees who had it
-    await EmployeeModel.updateMany(
-      { role_id },
-      { $unset: { role_id: "", role_name: "" } }
-    );
-
-    return deletedRole;
-  } catch (error) {
-    logger.error("Error while deleting a role: " + error);
-    throw error;
   }
-}
-
 }
 
 export default RoleService;

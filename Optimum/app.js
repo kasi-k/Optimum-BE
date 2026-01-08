@@ -26,6 +26,9 @@ import hospitalRoute from "./src/module/hospital/hospital.route.js";
 import notificationRoute from "./src/module/notifications/notify.route.js";
 import WFHRoute from "./src/module/wfh/wfh.route.js";
 import LeaveRoute from "./src/module/leave/leave.route.js";
+import categoryRoute from "./src/module/category/category.route.js";
+import departmentRoute from "./src/module/department/department.route.js";
+import masterroleRoute from "./src/module/role master/rolem.route.js";
 
 dotenv.config();
 
@@ -59,6 +62,9 @@ app.use(
 logger.info("Server started successfully");
 
 app.use("/role", roleRoute);
+app.use("/rolemaster", masterroleRoute);
+app.use("/category", categoryRoute);  
+app.use("/department", departmentRoute);
 app.use("/employee", employeeRoute);
 app.use("/appointment", appointmentRoute);
 app.use("/task", taskRoute);

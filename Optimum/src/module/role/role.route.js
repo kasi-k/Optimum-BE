@@ -1,12 +1,14 @@
 import { Router } from 'express';
-import {  createRole, deleteRoleById, getAllRoles, getRoleById, updateRoleById } from './role.controller.js';
+import {  createRole, deleteRoleById, getAllRoles, getRoleById, getRolesByDeptCat, updateRoleById } from './role.controller.js';
 
 const roleRoute = Router();
 
-roleRoute.post('/addrole',createRole); //working
-roleRoute.get('/getbyroleid',getRoleById); //working
-roleRoute.get('/getallroles',getAllRoles); //working
-roleRoute.put('/updatebyroleid', updateRoleById); //working
-roleRoute.delete('/deletebyroleid', deleteRoleById); //working
+roleRoute.post("/add", createRole);
+roleRoute.get("/all", getAllRoles);
+roleRoute.get("/bydeptcategory", getRolesByDeptCat);
+roleRoute.get("/byid", getRoleById);
+roleRoute.put("/update", updateRoleById);
+roleRoute.delete("/delete", deleteRoleById);
+
 
 export default roleRoute;
