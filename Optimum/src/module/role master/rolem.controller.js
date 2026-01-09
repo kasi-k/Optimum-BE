@@ -1,3 +1,4 @@
+import IdcodeServices from "../idcode/idcode.service.js";
 import RoleService from "./rolem.service.js";
 
 export const getRolesByCategory = async (req, res) => {
@@ -36,7 +37,17 @@ export const createRole = async (req, res) => {
       });
     }
 
+    // Check duplicate
+
+
+    // Generate role_id ONLY here
+    const idname = "RoleAccess";
+    const idcode = "RAC";
+    await IdcodeServices.addIdCode(idname, idcode);
+    const role_id = await IdcodeServices.generateCode(idname);
+
     const role = await RoleService.createRole({
+      role_id,
       department_id,
       category_id,
       role_name,
@@ -56,6 +67,7 @@ export const createRole = async (req, res) => {
 };
 
 
+
 export const getAllRoles = async (req, res) => {
   try {
     const roles = await RoleService.getAllRoles(); // Make sure this exists in RoleService
@@ -63,6 +75,42 @@ export const getAllRoles = async (req, res) => {
     res.status(200).json({
       status: true,
       data: roles,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getRoleByDeptCategoryRole = async (req, res) => {
+  try {
+    const { department_id, category_id, role_id } = req.query;
+
+    if (!department_id || !category_id || !role_id) {
+      return res.status(400).json({
+        status: false,
+        message: "All fields are required",
+      });
+    }
+
+    const role = await RoleService.getByDeptCategoryRole(
+      department_id,
+      category_id,
+      role_id
+    );
+
+    if (!role) {
+      return res.status(404).json({
+        status: false,
+        message: "Role not found",
+      });
+    }
+
+    res.status(200).json({
+      status: true,
+      data: role,
     });
   } catch (error) {
     res.status(500).json({

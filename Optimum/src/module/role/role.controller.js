@@ -6,6 +6,7 @@ import RoleService from "./role.service.js";
 export const createRole = async (req, res) => {
   try {
     const {
+      role_id,
       role_name,
       department_id,
       department_name,
@@ -16,13 +17,7 @@ export const createRole = async (req, res) => {
       status,
     } = req.body;
 
-    // Generate Role ID
-    const idname = "RoleAccess";
-    const idcode = "RAC";
-    await IdcodeServices.addIdCode(idname, idcode);
-    const role_id = await IdcodeServices.generateCode(idname);
 
-    if (!role_id) throw new Error("Role ID generation failed");
 
     const roleData = {
       role_id,

@@ -105,7 +105,7 @@ class EmployeeService {
     });
 
     // ----------------- Office Location -----------------
-    if (role.role_name?.toLowerCase() !== "admin") {
+    if (employee.department?.toLowerCase() !== "admin") {
       if (!employee.wfhApproved) {
         if (!location) throw new Error("Location required for office login");
         if (
@@ -147,6 +147,7 @@ class EmployeeService {
           department_name: role.department_name,
           category_name: role.category_name,
         },
+        department: employee.department,
         wfhApproved: employee.wfhApproved,
         status: employee.status,
         tasks,

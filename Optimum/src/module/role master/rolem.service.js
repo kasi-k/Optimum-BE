@@ -14,7 +14,18 @@ class RoleService {
     static async getAllRoles() {
     return await Role.find();
   }
+
+static async getByDeptCategoryRole(department_id, category_id, role_id) {
+  return RoleModel.findOne({
+    department_id,
+    category_id,
+     role_id, // Mongo _id
+  });
 }
+
+
+}
+
 
 
 export default RoleService;
