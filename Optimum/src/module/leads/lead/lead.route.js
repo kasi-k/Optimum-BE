@@ -7,6 +7,7 @@ import {
   getFollowUpsByLead,
   getLeadDocuments,
   transferLeads,
+  updateLead,
   uploadLeadDocuments,
 } from "./lead.controller.js";
 import { upload } from "../../../config/multer.js";
@@ -17,6 +18,7 @@ leadRoute.post("/add", createLead);
 
 // leadRoute.get("/campaign/:campaignId", getLeadsByCampaign);
 leadRoute.get("/getallleads", getAllLeads);
+leadRoute.put("/updatelead/:id", updateLead);
 leadRoute.put("/transferleads", transferLeads);
 leadRoute.delete("/:id", deleteLead);
 

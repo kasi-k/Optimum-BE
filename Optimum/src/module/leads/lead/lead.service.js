@@ -173,6 +173,22 @@ static async uploadDocuments(leadId, files) {
   }
 
 
+
+static async updateLeadById (leadId, updateData) {
+  const updatedLead = await LeadModel.findByIdAndUpdate(
+    leadId,
+    updateData,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  return updatedLead;
+};
+
+
+
 }
 
 export default LeadService;

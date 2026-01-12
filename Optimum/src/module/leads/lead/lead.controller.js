@@ -152,3 +152,48 @@ export const getLeadDocuments = async (req, res) => {
   }
 };
 
+
+export const updateLead = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const {
+      name,
+      phone,
+      email,
+      circle,
+      status,
+    } = req.body;
+
+    const updatedLead = await LeadService.updateLeadById(
+      id,
+      {
+        name,
+        phone,
+        email,
+        circle,
+        status,
+      }
+    );
+
+    if (!updatedLead) {
+      return res.status(404).json({
+        success: false,
+        message: "Lead not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Lead updated successfully",
+      data: updatedLead,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to update lead",
+      error: error.message,
+    });
+  }
+};
+
