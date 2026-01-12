@@ -63,7 +63,7 @@ static async transferLeads(leadIds, bdname) {
   // 🔍 FIND BD USING NAME
   const bd = await EmployeeModel.findOne({
     name: bdname,
-    role_name: "bd",
+
   });
 
   console.log(bd);
