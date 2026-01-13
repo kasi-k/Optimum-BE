@@ -9,7 +9,7 @@ class DoctorService {
   }
 
   static async getAllDoctors() {
-    return await DoctorModel.find();
+    return await DoctorModel.find().sort({ createdAt: -1 });
   }
   static async getDoctorById(id) {
     return await DoctorModel.findById(id);

@@ -42,7 +42,7 @@ class CategoryService {
   // 📄 Get Active Categories
   static async getAllActiveCategories() {
     try {
-      return await CategoryModel.find();
+      return await CategoryModel.find().sort({ createdAt: -1 });
     } catch (error) {
       logger.error("Error while getting active categories: " + error);
       throw error;

@@ -12,7 +12,7 @@ class RoleService {
   }
 
     static async getAllRoles() {
-    return await Role.find();
+    return await Role.find().sort({ createdAt: -1 });
   }
 
 static async getByDeptCategoryRole(department_id, category_id, role_id) {

@@ -9,7 +9,7 @@ class HospitalService {
   }
 
   static async getAllHospitals() {
-    return await HospitalModel.find();
+    return await HospitalModel.find().sort({ createdAt: -1 });
   }
   static async getHospitalById(id) {
     return await HospitalModel.findById(id);

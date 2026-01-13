@@ -24,7 +24,7 @@ class RoleService {
 
   static async getAllRoles(filters = {}) {
     try {
-      return await RoleModel.find(filters);
+      return await RoleModel.find(filters).sort({ createdAt: -1 });
     } catch (error) {
       logger.error("Error getting all roles: " + error);
       throw error;

@@ -51,11 +51,11 @@ export const updateTaskStatus = async (req, res) => {
 
 export const getAllTasks = async (req, res) => {
   try {
-    const { role_name, employee_id } = req.query; // coming from frontend query params
+    const { department, employee_id } = req.query; // coming from frontend query params
 
     let data;
 
-    if (role_name === "admin") {
+    if (department === "admin") {
       // 👨‍💼 Admin sees all tasks
       data = await TaskService.getAllTasks();
     } else {

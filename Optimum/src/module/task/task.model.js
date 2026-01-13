@@ -31,6 +31,7 @@ const taskSchema = new mongoose.Schema(
     },
 
     comments: [CommentSchema],
+    created_by: { type: String },
   },
 
   { timestamps: true }

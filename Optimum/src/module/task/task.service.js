@@ -39,7 +39,7 @@ class TaskService {
   }
 
   // Optional: notify all admins
-  const admins = await EmployeeModel.find({ role_name: "admin" });
+  const admins = await EmployeeModel.find({ department: "admin" });
   for (const admin of admins) {
     await NotificationService.createNotification({
       title: "Task Assigned",
@@ -59,7 +59,7 @@ class TaskService {
 
   // Get all tasks (for Admin)
   static async getAllTasks() {
-    const tasks = await TaskModel.find();
+    const tasks = await TaskModel.find().sort({ createdAt: -1 });
 
     // Map employee IDs to names
     const empIds = tasks.flatMap((t) => t.assigned_to);
@@ -81,7 +81,7 @@ class TaskService {
 
   // Get tasks for a specific employee
   static async getTasksByEmployee(employee_id) {
-    const tasks = await TaskModel.find({ assigned_to: employee_id });
+    const tasks = await TaskModel.find({ assigned_to: employee_id }).sort({ createdAt: -1 });
 
     // Map employee IDs to names
     const empIds = tasks.flatMap((t) => t.assigned_to);

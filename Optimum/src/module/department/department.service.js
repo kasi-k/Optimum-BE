@@ -7,7 +7,7 @@ class DepartmentService {
   }
 
   static async getAll() {
-    return await DepartmentModel.find();
+    return await DepartmentModel.find().sort({ createdAt: -1 });
   }
 }
 

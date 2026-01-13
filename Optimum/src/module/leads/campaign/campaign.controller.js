@@ -33,3 +33,32 @@ export const getCampaignById = async (req, res) => {
     res.status(500).json({ status: false, message: error.message });
   }
 };
+
+
+
+export const checkWhatsAppLeadController = async (req, res) => {
+  try {
+    const { campaignId, phone } = req.body;
+
+    if (!campaignId || !phone) {
+      return res.status(400).json({ status: false, message: "campaignId and phoneNumber are required" });
+    }
+
+    const result = await CampaignService.checkWhatsAppLead(campaignId, phone);
+    res.status(200).json({ status: true, ...result });
+  } catch (err) {
+    res.status(500).json({ status: false, message: err.message });
+  }
+};
+
+export const createLeadFromFormController = async (req, res) => {
+  try {
+    const result = await CampaignService.createLeadFromWhatsAppForm(req.body);
+    res.status(201).json({ status: true, data:result });
+  } catch (err) {
+    res.status(500).json({ status: false, message: err.message });
+  }
+};
+
+
+

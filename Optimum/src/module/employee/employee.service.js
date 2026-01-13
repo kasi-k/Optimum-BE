@@ -158,7 +158,7 @@ class EmployeeService {
 
   // ---------------------- Existing methods ----------------------
   static async getAllEmployees() {
-    return await EmployeeModel.find();
+    return await EmployeeModel.find().sort({ createdAt: -1 });
   }
 
   static async getEmployeeById(employee_id) {

@@ -101,7 +101,7 @@ class AppointmentService {
   }
 
   static async getAllAppointments() {
-    return await AppointmentModel.find();
+    return await AppointmentModel.find().sort({ createdAt: -1 });
   }
 
   static async getAppointmentsByCampaign(campaignId) {

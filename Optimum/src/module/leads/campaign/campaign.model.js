@@ -6,6 +6,7 @@ const campaignSchema = new mongoose.Schema(
     campaign_id: { type: String, unique: true },
     channelName: { type: String, required: true },
     channel: { type: String },
+    campaignId: { type: String },
     startDate: { type: Date },
     endDate: { type: Date },
     budget: { type: Number },
@@ -15,7 +16,7 @@ const campaignSchema = new mongoose.Schema(
     appointments: [
       { type: mongoose.Schema.Types.ObjectId, ref: "Appointments" },
     ],
-      campaignLink: { type: String },
+      
   },
 
   { timestamps: true }
