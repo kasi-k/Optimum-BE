@@ -29,7 +29,7 @@ const leadSchema = new mongoose.Schema(
     lead_id: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     phone: { type: String, required: true },
-    gender: { type: String, required: true },
+    gender: { type: String,},
     email: { type: String },
     source: { type: String },
     age: { type: String },
