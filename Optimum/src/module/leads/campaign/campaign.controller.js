@@ -36,25 +36,28 @@ export const getCampaignById = async (req, res) => {
 
 
 
-export const checkWhatsAppLeadController = async (req, res) => {
+export const whatsappInitialLeadController = async (req, res) => {
   try {
-    const { campaignId, phone } = req.body;
-
+    const { campaignId, phone, name } = req.body;
+    
     if (!campaignId || !phone) {
-      return res.status(400).json({ status: false, message: "campaignId and phoneNumber are required" });
+      return res.status(400).json({ 
+        status: false, 
+        message: "campaignId and phone required" 
+      });
     }
 
-    const result = await CampaignService.checkWhatsAppLead(campaignId, phone);
-    res.status(200).json({ status: true, ...result });
+    const result = await CampaignService.checkWhatsAppLead(campaignId, phone, name);
+    res.status(201).json({ status: true, ...result });
   } catch (err) {
     res.status(500).json({ status: false, message: err.message });
   }
 };
 
-export const createLeadFromFormController = async (req, res) => {
+export const whatsappFormUpdateController = async (req, res) => {
   try {
-    const result = await CampaignService.createLeadFromWhatsAppForm(req.body);
-    res.status(201).json({ status: true, data:result });
+    const result = await CampaignService.updateWhatsAppLeadForm(req.body);
+    res.status(200).json({ status: true, ...result });
   } catch (err) {
     res.status(500).json({ status: false, message: err.message });
   }

@@ -14,11 +14,15 @@ import {
   changePasswordController,
   removeEmployeeRole,
 } from "./employee.controller.js";
+import {  uploadEmployeeFiles } from "../../config/multer.js";
 
 const employeeRoute = Router();
 
 // Create
-employeeRoute.post("/add", createEmployee);
+employeeRoute.post("/add",    uploadEmployeeFiles.fields([
+    { name: "aadhaar", maxCount: 1 },
+    { name: "healthInsuranceFile", maxCount: 1 },
+  ]), createEmployee);
 employeeRoute.post("/login", loginEmployee);
 employeeRoute.put("/changepassword", changePasswordController);
 
@@ -30,7 +34,10 @@ employeeRoute.get("/getemployee/:employee_id", getEmployeeById);
 employeeRoute.get("/searchemployees", searchEmployees);
 
 // Update
-employeeRoute.put("/updateemployee/:employee_id", updateEmployee);
+employeeRoute.put("/updateemployee/:employee_id",   uploadEmployeeFiles.fields([
+    { name: "aadhaar", maxCount: 1 },
+    { name: "healthInsuranceFile", maxCount: 1 },
+  ]),  updateEmployee);
 
 // Delete
 employeeRoute.put("/removeuser/:employee_id", removeEmployeeRole);

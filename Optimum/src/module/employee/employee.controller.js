@@ -1,14 +1,41 @@
 import EmployeeService from "./employee.service.js";
 
+
+
 // 📌 Create Employee
 export const createEmployee = async (req, res) => {
   try {
-    const data = await EmployeeService.addEmployee(req.body);
-    res.status(201).json({ status: true, message: "Employee created", data });
+    const data = req.body;
+
+    // 🟢 FILE PATHS FROM S3
+    const aadhaar =
+      req.files?.aadhaar?.[0]?.location || null;
+
+    const healthInsuranceFile =
+      req.files?.healthInsuranceFile?.[0]?.location || null;
+
+    const employee = await EmployeeService.addEmployee({
+      ...data,
+      aadhaar,
+      healthInsuranceFile,
+    });
+
+
+
+    res.status(201).json({
+      status: true,
+      message: "Employee created successfully",
+      data,
+    });
   } catch (error) {
-    res.status(500).json({ status: false, message: error.message });
+    console.error("Create employee error:", error);
+    res.status(500).json({
+      status: false,
+      message: error.message,
+    });
   }
 };
+
 
 // 📌 Employee Login
 export const loginEmployee = async (req, res) => {
@@ -42,17 +69,46 @@ export const getEmployeeById = async (req, res) => {
   }
 };
 
-// 📌 Update employee
+// 📌 Update employee (WITH FILE SUPPORT)
 export const updateEmployee = async (req, res) => {
   try {
-    const data = await EmployeeService.updateEmployee(req.params.employee_id, req.body);
-    if (!data)
-      return res.status(404).json({ status: false, message: "Employee not found" });
-    res.status(200).json({ status: true, message: "Employee updated", data });
+    const updateData = { ...req.body };
+
+    // ✅ Aadhaar file
+    if (req.files?.aadhaar?.[0]) {
+      updateData.aadhaar = req.files.aadhaar[0].location;
+    }
+
+    // ✅ Health insurance file
+    if (req.files?.healthInsuranceFile?.[0]) {
+      updateData.healthInsuranceFile =
+        req.files.healthInsuranceFile[0].location;
+    }
+
+    const data = await EmployeeService.updateEmployee(
+      req.params.employee_id,
+      updateData
+    );
+
+    if (!data) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Employee not found" });
+    }
+
+    res.status(200).json({
+      status: true,
+      message: "Employee updated successfully",
+      data,
+    });
   } catch (error) {
-    res.status(500).json({ status: false, message: error.message });
+    res.status(500).json({
+      status: false,
+      message: error.message,
+    });
   }
 };
+
 
 // 📌 Delete employee
 export const deleteEmployee = async (req, res) => {
