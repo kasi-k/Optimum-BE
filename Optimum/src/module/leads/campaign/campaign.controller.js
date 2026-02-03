@@ -39,6 +39,8 @@ export const getCampaignById = async (req, res) => {
 export const whatsappInitialLeadController = async (req, res) => {
   try {
     const { campaignId, phone, name } = req.body;
+    console.log(campaignId, phone, name,"watsapp data");
+    
     
     if (!campaignId || !phone) {
       return res.status(400).json({ 
