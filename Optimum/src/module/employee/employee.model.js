@@ -14,10 +14,10 @@ const employeeSchema = new mongoose.Schema(
   {
     employee_id: { type: String, unique: true },
     name: { type: String, required: true },
-    fatherName: { type: String, required: true }, // ✅ NEW
-    dob: { type: Date, required: true },
-    address: { type: String, required: true },
-    gender: { type: String, required: true },
+    fatherName: { type: String,  }, // ✅ NEW
+    dob: { type: Date,  },
+    address: { type: String, },
+    gender: { type: String, },
     phone: { type: String, default: "" },
     email: { type: String, default: "", unique: true },
     role_name: { type: String, default: "" },
@@ -27,14 +27,14 @@ const employeeSchema = new mongoose.Schema(
     rpperson: { type: String }, // Reporting Person ID
     lastlogin: { type: Date },
     department: { type: String },
-    jobTitle: { type: String, required: true }, // ✅ NEW
-    qualification: { type: String, required: true }, // ✅ NEW
-    dateOfJoining: { type: Date, required: true }, // ✅ NEW
+    jobTitle: { type: String}, // ✅ NEW
+    qualification: { type: String}, // ✅ NEW
+    dateOfJoining: { type: Date }, // ✅ NEW
     status: { type: String, enum: ['Active', 'Resigned', 'Terminated'], default: "Active" }, // ✅ UPDATED
-    adhaarNumber: { type: String, required: true, unique: true }, // ✅ NEW
-    bankAccount: { type: String, required: true }, // ✅ NEW
+    adhaarNumber: { type: String,  unique: true }, // ✅ NEW
+    bankAccount: { type: String }, // ✅ NEW
     // bankIfsc: { type: String, required: true }, // ✅ NEW
-    ctc: { type: Number, required: true, min: 10000 }, // ✅ NEW
+    ctc: { type: Number,  min: 10000 }, // ✅ NEW
     // healthInsurance: { type: String, enum: ['Yes - Company Provided', 'No', 'Private'], required: true }, // ✅ NEW
     leaveBalance: { type: Number, default: 0, min: 0 }, // ✅ NEW
     lastIncrementDate: { type: Date }, // ✅ NEW

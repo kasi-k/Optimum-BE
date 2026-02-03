@@ -30,6 +30,7 @@ const leadSchema = new mongoose.Schema(
     name: { type: String, required: true },
     phone: { type: String, required: true },
     gender: { type: String,},
+    profession: { type: String,},
     email: { type: String },
     source: { type: String },
     age: { type: String },
