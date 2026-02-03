@@ -56,13 +56,16 @@ static async checkWhatsAppLead(campaignId, phone, name) {
   if (!campaign) throw new Error("Campaign not found");
 
   const normalizedPhone = String(phone).replace(/\D/g, "");
+
+  console.log(normalizedPhone,"leadswatapp");
+  
   
   // ✅ STEP 1: ALWAYS check if phone exists
   let lead = await LeadModel.findOne({ phone: normalizedPhone });
 
   if (!lead) {
     // ✅ NEW USER → CREATE basic lead with name+phone FIRST
-    console.log(`🎉 Creating NEW lead: ${name} (${normalizedPhone})`);
+    console.log(`🎉 Creating NEW lead: ${campaignId} ${name} (${normalizedPhone})`);
     
     const idname = "Leads"; const idcode = "L";
     await IdcodeServices.addIdCode(idname, idcode);
@@ -74,9 +77,10 @@ static async checkWhatsAppLead(campaignId, phone, name) {
       lead_id,
       campaign: campaign._id,
       campaign_id: campaign.campaign_id,
-      source: "whatsapp_initial",
+      source: "whatsapp",
       status: "pending_form"
     });
+console.log(lead,"laedsgenerated");
 
     campaign.leads.push(lead._id);
     await campaign.save();

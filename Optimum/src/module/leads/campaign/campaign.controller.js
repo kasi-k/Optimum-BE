@@ -48,9 +48,13 @@ export const whatsappInitialLeadController = async (req, res) => {
     }
 
     const result = await CampaignService.checkWhatsAppLead(campaignId, phone, name);
+    console.log(result,"watapp leads");
+    
     res.status(201).json({ status: true, ...result });
   } catch (err) {
     res.status(500).json({ status: false, message: err.message });
+    console.log(err.message,"watsapp error");
+    
   }
 };
 
