@@ -27,3 +27,4 @@ export const uploadEmployeeFiles = multer({
     fileSize: 5 * 1024 * 1024, // 5MB
   },
 });
+export const uploadTaskCommentFile = upload.single('file');

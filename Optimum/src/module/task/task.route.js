@@ -7,12 +7,12 @@ import {
   updateTask,
   updateTaskStatus,
 } from "./task.controller.js";
-import { upload } from "../../config/multer.js";
+import { upload, uploadTaskCommentFile } from "../../config/multer.js";
 
 const taskRoute = Router();
 
 taskRoute.post("/add", upload.array("attachments", 5), createTask);
-taskRoute.post("/addcomment/:_id", addComments);
+taskRoute.post("/addcomment/:_id", uploadTaskCommentFile, addComments);
 taskRoute.patch("/updatetask/:id/status", updateTaskStatus);
 
 taskRoute.get("/getalltasks", getAllTasks);

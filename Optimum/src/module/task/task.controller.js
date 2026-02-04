@@ -1,5 +1,6 @@
 
 import TaskService from "./task.service.js";
+
 export const createTask = async (req, res) => {
   try {
     const files = req.files || [];
@@ -11,25 +12,48 @@ export const createTask = async (req, res) => {
     res.status(500).json({ status: false, message: err.message });
   }
 };
+
+
+
 export const addComments = async (req, res) => {
   try {
     const taskId = req.params._id;
-    const commentData = req.body;
+    
+    // Prepare comment data
+    const commentData = {
+      comment: req.body.comment,
+      taskId: taskId,
+      commented_by: req.body.commented_by,
+      date: new Date(),
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    // Add S3 file info if file uploaded
+    if (req.file) {
+      commentData.filePath = req.file.location; // ✅ S3 full URL
+      commentData.fileName = req.file.originalname;
+      commentData.fileSize = req.file.size;
+      commentData.s3Key = req.file.key; // ✅ S3 key for future reference
+    }
 
     const updatedTask = await TaskService.addComments(taskId, commentData);
 
     res.status(201).json({
       status: true,
-      message: "Comment added and notifications sent",
-      data: updatedTask,
+      message: "Comment added successfully",
+      data: {
+        task: updatedTask,
+        comment: commentData
+      }
     });
   } catch (err) {
     res.status(500).json({
       status: false,
-      message: err.message || "Failed to add comment",
+      message: err.message || "Failed to add comment"
     });
   }
 };
+
 
 
 // task.controller.js

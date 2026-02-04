@@ -100,34 +100,35 @@ class TaskService {
         .join(", "),
     }));
   }
-  static async addComments(taskId, commentData) {
-    if (!taskId) throw new Error("Task ID is required");
-    if (!commentData || !commentData.comment) throw new Error("Comment data is required");
+// No changes needed! Your existing service works perfectly:
+static async addComments(taskId, commentData) {
+  if (!taskId) throw new Error("Task ID is required");
+  if (!commentData || !commentData.comment) throw new Error("Comment data is required");
 
-    // 1️⃣ Add comment to task
-    const updatedTask = await TaskModel.findByIdAndUpdate(
-      taskId,
-      { $push: { comments: commentData } },
-      { new: true, runValidators: true }
-    );
+  const updatedTask = await TaskModel.findByIdAndUpdate(
+    taskId,
+    { $push: { comments: commentData } },
+    { new: true, runValidators: true }
+  );
 
-    if (!updatedTask) throw new Error("Task not found");
+  if (!updatedTask) throw new Error("Task not found");
 
-    // 2️⃣ Send notifications to alerted persons
-    if (updatedTask.assigned_to && updatedTask.assigned_to.length > 0) {
-      const notifications = updatedTask.assigned_to.map(personId => ({
-        title:"New Task Comment",
-        employeeId: personId,
-        message: `A new comment was added by ${commentData.commented_by}`,
-        date: new Date(),
-        read: false,
-      }));
+  // Enhanced notification with file info
+  if (updatedTask.assigned_to && updatedTask.assigned_to.length > 0) {
+    const notifications = updatedTask.assigned_to.map(personId => ({
+      title: "New Task Comment",
+      employeeId: personId,
+      message: `New comment by ${commentData.commented_by}${commentData.fileName ? ` with attachment: ${commentData.fileName}` : ''}`,
+      date: new Date(),
+      read: false,
+    }));
 
-      await NotificationModel.insertMany(notifications);
-    }
-
-    return updatedTask;
+    await NotificationModel.insertMany(notifications);
   }
+
+  return updatedTask;
+}
+
 
   // Update task
   static async updateTask(_id, updateData) {
